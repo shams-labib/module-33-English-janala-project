@@ -7,12 +7,22 @@ const loadLessons = () => {
 
 }
 
+const removeActive = () => {
+    const lessonsBtn = document.querySelectorAll('.lessons-btn2')
+    // console.log(lessonsBtn)
+    lessonsBtn.forEach(btn => btn.classList.remove('active')) //eta muloto sob dhoroner active class ke remove kore
+}
+
 const loadLevelWord = (id) =>{
     // console.log(id)
+    removeActive();
     const url = `https://openapi.programming-hero.com/api/level/${id}`
     fetch(url)
     .then(res => res.json())
     .then(json => {
+        const clickBtn = document.getElementById(`lessons-btn-${id}`)
+        // console.log(clickBtn)
+        clickBtn.classList.add('active')
         displayLevelWord(json.data)
     })
 }
@@ -46,7 +56,7 @@ const displayLevelWord = (words)=> {
     
         <!-- btn -->
          <div class="flex justify-between items-center ">
-           <button class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]"><i class="fa-solid fa-circle-info"></i></button>
+           <button  onclick="my_modal_5.showModal()" class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]"><i class="fa-solid fa-circle-info"></i></button>
            <button class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]"><i class="fa-solid fa-volume-high"></i></button>
          </div>
          
@@ -67,7 +77,7 @@ const displayLessons = (data) => {
 
         const creatingNew = document.createElement('div');
         creatingNew.innerHTML = `
-            <button onclick = "loadLevelWord(${post.level_no})" class="btn btn-outline btn-primary"><span><i class="fa-solid fa-book-open"></i></span>Lesson - ${post.level_no}</button>
+            <button id="lessons-btn-${post.level_no}" onclick = "loadLevelWord(${post.level_no})" class="btn btn-outline btn-primary lessons-btn2"><span><i class="fa-solid fa-book-open"></i></span>Lesson - ${post.level_no}</button>
         
         `
         container.append(creatingNew)
