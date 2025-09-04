@@ -1,3 +1,21 @@
+const createElements = (arra) => {
+    const htmlElements = arra.map((el) => `<span class="btn">${el}</span>`)
+    return htmlElements.join(" ")
+}
+
+
+const manageSpinneers = (status) =>{
+    if(status == true) {
+        document.getElementById('spinner').classList.remove('hidden')
+        document.getElementById('word-container').classList.add('hidden')
+    }
+    else{
+        document.getElementById('word-container').classList.remove('hidden')
+        document.getElementById('spinner').classList.add('hidden')
+    }
+}
+
+
 const loadLessons = () => {
     fetch("https://openapi.programming-hero.com/api/levels/all") //fetch muloto ekta promise dey
     .then(res => res.json())
@@ -14,6 +32,7 @@ const removeActive = () => {
 }
 
 const loadLevelWord = (id) =>{
+    manageSpinneers(true)
     // console.log(id)
     removeActive();
     const url = `https://openapi.programming-hero.com/api/level/${id}`
@@ -25,6 +44,63 @@ const loadLevelWord = (id) =>{
         clickBtn.classList.add('active')
         displayLevelWord(json.data)
     })
+}
+
+const loadwordDetail = async (id) => {
+    const url = `https://openapi.programming-hero.com/api/word/${id}`
+    console.log(url)
+    const res = await fetch(url);
+    const details = await res.json();
+    displayWordDetail(details.data)
+}
+
+// {
+//     "word": "Ball",
+//     "meaning": "বল",
+//     "pronunciation": "বল",
+//     "level": 1,
+//     "sentence": "He is playing with a ball.",
+//     "points": 1,
+//     "partsOfSpeech": "noun",
+//     "synonyms": [
+//         "sphere",
+//         "round object",
+//         "toy"
+//     ],
+//     "id": 81
+// }
+
+const displayWordDetail = (data) => {
+     console.log(data)
+     const detailsBox = document.getElementById('details-container')
+     detailsBox.innerHTML = `
+     
+     <div class=""> 
+              <h1 class="text-2xl font-bold mb-4">${data.word}( <i class="fa-solid fa-microphone-lines"></i> : ${data.pronunciation})</h1>
+              <h1 class=" font-bold mb-3">Meaning</h1>
+              <p class="font-bangla mb-5">${data.meaning}</p>
+
+              <h1 class="font-semibold mb-2">Example</h1>
+              <p class="mb-5">${data.sentence}</p>
+  
+              <p class="mb-2">সমার্থক শব্দ গুলো</p>
+               <div class="space-x-2">
+                    
+                <div class="">
+                    ${createElements(data.synonyms)}
+
+               </div>
+ 
+
+               </div>
+
+              <button class="btn btn-active btn-primary mt-10">Complete Learning</button>
+
+          </div>
+     
+     
+     `
+     document.getElementById('word_modal').showModal();
 }
 
 const displayLevelWord = (words)=> {
@@ -43,6 +119,7 @@ const displayLevelWord = (words)=> {
         
         
         `;
+        manageSpinneers(false)
         return;
     }
 
@@ -56,7 +133,7 @@ const displayLevelWord = (words)=> {
     
         <!-- btn -->
          <div class="flex justify-between items-center ">
-           <button  onclick="my_modal_5.showModal()" class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]"><i class="fa-solid fa-circle-info"></i></button>
+           <button  onclick="loadwordDetail(${word.id})" class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]"><i class="fa-solid fa-circle-info"></i></button>
            <button class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]"><i class="fa-solid fa-volume-high"></i></button>
          </div>
          
@@ -64,6 +141,7 @@ const displayLevelWord = (words)=> {
         `
         wordContainer.append(newWord)
     })
+    manageSpinneers(false)
 }
 
 const displayLessons = (data) => {
@@ -85,5 +163,7 @@ const displayLessons = (data) => {
 
 
 }
+
+
 
 loadLessons();
